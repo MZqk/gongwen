@@ -11,11 +11,12 @@ urls =eval(arealist.read()) # 转换为字典格式
 # urls = {'www.baidu.com' : 'baidu'}
 develop_bth = "//*[@id=\"u1\"]/a[6]" # 开发者模式按钮
 receive_bth = "//*[@id=\"s_btn_wr\"]" # 接收按钮
-sure_bth = "//*[@id=\"s_btn_wr\"]" # 确认接收成功按钮
+sure_bth = "//*[@id=\"2\"]/h3/a" # 确认接收成功按钮
 
 def openhtml(url):
     driver = drivers
     driver.get("https://www."+urls[url]+".com")
+    #driver.maximize_window()
     WebDriverWait(driver, 5, 0.5).until(EC.presence_of_element_located((By.XPATH, develop_bth ))).click()
     sleep(2)
     driver.get("https://news."+urls[url]+".com")
@@ -24,13 +25,17 @@ def openhtml(url):
     search.send_keys("范冰冰") #delte
     driver.find_element_by_xpath(receive_bth).click()
     try:
-        element = WebDriverWait(driver, 15, 0.5).until(EC.presence_of_element_located((By.XPATH, sure_bth )))
+        element = WebDriverWait(driver, 15, 0.5).until(
+            EC.presence_of_element_located((By.XPATH, sure_bth ))
+        )
         element.click()
         driver.save_screenshot("/home/deepin/"+url+".png")
+        #driver.get_screenshot_as_file("/home/deepin/"+url+".png")
         print(url+" 检查通过")
     except:
         driver.save_screenshot("/home/deepin/error"+url+".png")
         print(url+"检查不通过，请手动检查服务")
+        print("https://news."+urls[url]+".com")
     finally:
         print("----------------------------")
 
