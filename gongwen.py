@@ -3,43 +3,45 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from  selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from time import sleep
+from selenium.common.exceptions import TimeoutException
 
 drivers = webdriver.Chrome()
-arealist = open("checkarea.json","r") # 打开文件读取所需检查地区
+arealist = open("checkarea.dict","r") # 打开文件读取所需检查地区
 urls =eval(arealist.read()) # 转换为字典格式
 # urls = {'www.baidu.com' : 'baidu'}
-develop_bth = "//*[@id=\"u1\"]/a[6]" # 开发者模式按钮
-receive_bth = "//*[@id=\"s_btn_wr\"]" # 接收按钮
-sure_bth = "//*[@id=\"2\"]/h3/a" # 确认接收成功按钮
+develop_bth = "//*[@id=\"btn_dev\"]/span/span[1]" # 开发者模式按钮
+receive_bth = "/html/body/div/div[1]/div/div[3]/a/span/span" # 接收按钮
+sure_bth = "/html/body/div[2]/div[2]/div[4]/a/span/span" # 确认接收成功按钮
 
 def openhtml(url):
     driver = drivers
-    driver.get("https://www."+urls[url]+".com")
-    #driver.maximize_window()
-    WebDriverWait(driver, 5, 0.5).until(EC.presence_of_element_located((By.XPATH, develop_bth ))).click()
-    sleep(2)
-    driver.get("https://news."+urls[url]+".com")
-    sleep(2)
-    search = driver.find_element_by_xpath("//*[@id=\"ww\"]") #delete
-    search.send_keys("范冰冰") #delte
-    driver.find_element_by_xpath(receive_bth).click()
+    #driver.implicitly_wait(8)
+    driver.set_page_load_timeout(5)
+
     try:
-        element = WebDriverWait(driver, 15, 0.5).until(
-            EC.presence_of_element_located((By.XPATH, sure_bth ))
-        )
-        element.click()
-        driver.save_screenshot("/home/deepin/"+url+".png")
-        #driver.get_screenshot_as_file("/home/deepin/"+url+".png")
-        print(url+" 检查通过")
-    except:
-        driver.save_screenshot("/home/deepin/error"+url+".png")
-        print(url+"检查不通过，请手动检查服务")
-        print("https://news."+urls[url]+".com")
+        driver.get("http://."+urls[url]+"/cztdataexchange-war/index.action")
+        WebDriverWait(driver, 2, 0.5).until(EC.presence_of_element_located((By.XPATH, develop_bth ))).click()
+    except TimeoutException:
+        print(url+"拒绝访问地址")
     finally:
-        print("----------------------------")
+        try:
+            driver.get("http://"+urls[url]+"/cztdataexchange-war/cztdataexchange/intoMyTest.action")
+            WebDriverWait(driver, 2, 0.5).until(EC.presence_of_element_located((By.XPATH, receive_bth ))).click()
+            WebDriverWait(driver, 3, 0.5).until(EC.presence_of_element_located((By.XPATH, sure_bth ))).click()
+            driver.save_screenshot(url+".png")
+            #driver.get_screenshot_as_file(url+".png")
+            print(url+" 检查通过")
+        except:
+            driver.save_screenshot("error"+url+".png")
+            print(url+"检查不通过，请手动检查服务")
+            print("http://"+urls[url]+"/cztdataexchange-war/cztdataexchange/intoMyTest.action")
+        finally:
+            print("----------------------------")
 
 for url in urls:
+    #print(url)
+    #print(urls[url])
     openhtml(url)
-    drivers.quit()
-    arealist.close()
+arealist.close()   
+drivers.quit()
+
