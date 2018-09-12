@@ -13,10 +13,11 @@ urls =eval(arealist.read()) # 转换为字典
 develop_bth = "//*[@id=\"btn_dev\"]/span/span[1]" # 开发者模式按钮
 receive_bth = "/html/body/div/div[1]/div/div[3]/a/span/span" # 接收按钮
 sure_bth = "/html/body/div[2]/div[2]/div[4]/a/span/span" # 确认接收成功按钮
+log = open('gongwen.log','w')
 
 def openhtml(url):
     driver = drivers
-    driver.set_page_load_timeout(5) # 超时即抛出异常
+    driver.set_page_load_timeout(1) # 超时即抛出异常
     try:
         driver.get("http://."+urls[url]+"/cztdataexchange-war/index.action")
         WebDriverWait(driver, 3, 0.5).until(EC.presence_of_element_located((By.XPATH, develop_bth))).click()
@@ -35,12 +36,12 @@ def openhtml(url):
             print("----------------------------")
     except TimeoutException:
         print(url+"拒绝访问地址，请检查网络")
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXX",file=log)
 
 
 for url in urls:
     openhtml(url)
-
+log.close()
 arealist.close()   
 drivers.quit()
 
