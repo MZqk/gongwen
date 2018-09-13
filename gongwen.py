@@ -8,7 +8,7 @@ from time import sleep
 
 drivers = webdriver.Chrome()
 
-arealist = open("checkarea.dict","r") 
+arealist = open("checkarea.dict","r")
 refuselist = open("refusearea.dict","r")
 emptylist = open("emptyarea.dict","r")
 
@@ -20,6 +20,13 @@ develop_bth = "//*[@id=\"btn_dev\"]/span/span[1]" # 开发者模式按钮
 receive_bth = "/html/body/div/div[1]/div/div[3]/a/span/span" # 接收按钮
 sure_bth = "/html/body/div[2]/div[2]/div[4]/a/span/span" # 确认接收成功按钮
 erro_bth = "/html/body/div[5]/div[2]/div[4]/a/span/span"
+
+def openhtml(url):
+    driver = drivers
+    driver.set_page_load_timeout(1) # 超时即抛出异常
+
+# /html/body/div[5]/div[2]/div[4]/a/span/span
+
 
 def openhtml(url):
     driver = drivers
@@ -42,6 +49,7 @@ def openhtml(url):
         finally:
             print("----------------------------")
     except TimeoutException:
+
         print(url+"拒绝访问地址，请检查网络    http://"+urls[url]+"/cztdataexchange-war/index.action")
         print("XXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
@@ -58,5 +66,5 @@ for url2 in empty_urls:
 
 arealist.close()
 arealist.close()
-arealist.close()   
+arealist.close()
 drivers.quit()
