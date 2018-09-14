@@ -5,8 +5,8 @@ from time import sleep
 driver = webdriver.Chrome()
 driver.get("http://47.97.63.111:28082/secure/Dashboard.jspa")
 
-username = 'zhangqk'
-password = 'passzqk'
+username = 'XXX'
+password = 'XXX'
 username_bth = "//*[@id=\"login-form-username\"]"
 password_bth = "//*[@id=\"login-form-password\"]"
 login = "//*[@id=\"login\"]"
